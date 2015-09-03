@@ -23,6 +23,14 @@ section at the end of this file).
 + Then edit it accordingly.
 */
 
+#define DEBUG_LEVEL             0
+/* This macro configures a function for debug logs on the serial line. If it is
+ * not defined or defined to 0, all debugging calls are no-ops. If it is 1, DBG1
+ * logs will appear, but not DBG2. If it is 2, DBG1 and DBG2 logs will be printed.
+ * A debug log consists of a label ('prefix') to indicate which debug log created
+ * the output and a memory block to dump in hex ('data' and 'len').
+ */
+
 /* ---------------------------- Hardware Config ---------------------------- */
 
 #define USB_CFG_IOPORTNAME      D
@@ -74,6 +82,16 @@ section at the end of this file).
 
 /* --------------------------- Functional Range ---------------------------- */
 
+#define USB_CFG_HAVE_INTROUT_ENDPOINT   0
+/* Define this to 1 if you want to compile a version with two endpoints: The
+ * default control endpoint 0 and an interrupt-out endpoint 1.
+ */
+#define USB_CFG_HAVE_INTROUT_ENDPOINT3  0
+/* Define this to 1 if you want to compile a version with three endpoints: The
+ * default control endpoint 0, an interrupt-out endpoint 3 (or the number
+ * configured below) and an interrupt-out endpoint 1. You must also define
+ * USB_CFG_HAVE_INTROUT_ENDPOINT to 1 for this feature.
+ */
 #define USB_CFG_HAVE_INTRIN_ENDPOINT    0
 /* Define this to 1 if you want to compile a version with two endpoints: The
  * default control endpoint 0 and an interrupt-in endpoint (any other endpoint
@@ -257,8 +275,8 @@ section at the end of this file).
  * the macros. See the file USB-IDs-for-free.txt before you assign a name if
  * you use a shared VID/PID.
  */
-/*#define USB_CFG_SERIAL_NUMBER   'N', 'o', 'n', 'e' */
-/*#define USB_CFG_SERIAL_NUMBER_LEN   0 */
+#define USB_CFG_SERIAL_NUMBER   'N', 'o', 'n', 'e'
+#define USB_CFG_SERIAL_NUMBER_LEN   0
 /* Same as above for the serial number. If you don't want a serial number,
  * undefine the macros.
  * It may be useful to provide the serial number through other means than at
@@ -279,7 +297,7 @@ section at the end of this file).
  * HID class is 3, no subclass and protocol required (but may be useful!)
  * CDC class is 2, use subclass 2 and protocol 1 for ACM
  */
-/* #define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    42 */
+#define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    0
 /* Define this to the length of the HID report descriptor, if you implement
  * an HID device. Otherwise don't define it or define it to 0.
  * If you use this define, you must add a PROGMEM character array named

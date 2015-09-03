@@ -141,6 +141,7 @@ PROGMEM const char usbDescriptorConfiguration[] = {    /* USB configuration desc
     9,          /* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
     USBDESCR_CONFIG,    /* descriptor type */
     18 + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT3 +
+         7 * USB_CFG_HAVE_INTROUT_ENDPOINT + 7 * USB_CFG_HAVE_INTROUT_ENDPOINT3 +
                 (USB_CFG_DESCR_PROPS_HID & 0xff), 0,
                 /* total length of data returned (including inlined descriptors) */
     1,          /* number of interfaces in this configuration */
@@ -157,7 +158,7 @@ PROGMEM const char usbDescriptorConfiguration[] = {    /* USB configuration desc
     USBDESCR_INTERFACE, /* descriptor type */
     0,          /* index of this interface */
     0,          /* alternate setting for this interface */
-    USB_CFG_HAVE_INTRIN_ENDPOINT + USB_CFG_HAVE_INTRIN_ENDPOINT3, /* endpoints excl 0: number of endpoint descriptors to follow */
+    USB_CFG_HAVE_INTRIN_ENDPOINT + USB_CFG_HAVE_INTRIN_ENDPOINT3 + USB_CFG_HAVE_INTROUT_ENDPOINT + USB_CFG_HAVE_INTROUT_ENDPOINT3, /* endpoints excl 0: number of endpoint descriptors to follow */
     USB_CFG_INTERFACE_CLASS,
     USB_CFG_INTERFACE_SUBCLASS,
     USB_CFG_INTERFACE_PROTOCOL,
@@ -183,6 +184,22 @@ PROGMEM const char usbDescriptorConfiguration[] = {    /* USB configuration desc
     7,          /* sizeof(usbDescrEndpoint) */
     USBDESCR_ENDPOINT,  /* descriptor type = endpoint */
     (char)(0x80 | USB_CFG_EP3_NUMBER), /* IN endpoint number 3 */
+    0x03,       /* attrib: Interrupt endpoint */
+    8, 0,       /* maximum packet size */
+    USB_CFG_INTR_POLL_INTERVAL, /* in ms */
+#endif
+#if USB_CFG_HAVE_INTROUT_ENDPOINT
+    7,          /* sizeof(usbDescrEndpoint) */
+    USBDESCR_ENDPOINT,  /* descriptor type = endpoint */
+    (char)0x01, /* OUT endpoint number 1 */
+    0x03,       /* attrib: Interrupt endpoint */
+    8, 0,       /* maximum packet size */
+    USB_CFG_INTR_POLL_INTERVAL, /* in ms */
+#endif
+#if USB_CFG_HAVE_INTROUT_ENDPOINT3
+    7,          /* sizeof(usbDescrEndpoint) */
+    USBDESCR_ENDPOINT,  /* descriptor type = endpoint */
+    (char)(0x00 | USB_CFG_EP3_NUMBER), /* OUT endpoint number 3 */
     0x03,       /* attrib: Interrupt endpoint */
     8, 0,       /* maximum packet size */
     USB_CFG_INTR_POLL_INTERVAL, /* in ms */
@@ -219,7 +236,7 @@ static inline void  usbResetStall(void)
 static void usbGenericSetInterrupt(uchar *data, uchar len, usbTxStatus_t *txStatus)
 {
 uchar   *p;
-char    i;
+schar    i;
 
 #if USB_CFG_IMPLEMENT_HALT
     if(usbTxLen1 == USBPID_STALL)
@@ -609,6 +626,8 @@ isNotReset:
 
 USB_PUBLIC void usbInit(void)
 {
+    USBDDR &= ~( (1 << USB_CFG_DMINUS_BIT) | (1 << USB_CFG_DPLUS_BIT) );
+    USBOUT &= ~( (1 << USB_CFG_DMINUS_BIT) | (1 << USB_CFG_DPLUS_BIT) );
 #if USB_INTR_CFG_SET != 0
     USB_INTR_CFG |= USB_INTR_CFG_SET;
 #endif

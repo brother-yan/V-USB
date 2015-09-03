@@ -81,7 +81,7 @@ Thanks to Oleg Semyonov for his help with the IAR tools port!
  */
 
 /* ------------------------------------------------------------------------- */
-#elif __CODEVISIONAVR__ /* check for CodeVision AVR */
+#elif defined __CODEVISIONAVR__ /* check for CodeVision AVR */
 /* ------------------------------------------------------------------------- */
 /* This port is not working (yet) */
 
@@ -133,6 +133,8 @@ static inline void  sei(void)
 #define macro   .macro
 #define endm    .endm
 #define nop2    rjmp    .+0 /* jump to next instruction */
+
+#define USB_CFG_USE_SWITCH_STATEMENT 0  /* macro for if() cascase fails for unknown reason */
 
 #endif  /* development environment */
 
